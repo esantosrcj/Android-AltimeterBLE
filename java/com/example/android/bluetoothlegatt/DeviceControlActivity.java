@@ -109,6 +109,8 @@ public class DeviceControlActivity extends Activity {
                 // Show all the supported services and characteristics on the user interface.
                 //displayGattServices(mBluetoothLeService.getSupportedGattServices());
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+
+                // Displays the data from the RX Characteristic
                 displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
             }
         }
@@ -313,13 +315,33 @@ public class DeviceControlActivity extends Activity {
 
         if (mBluetoothLeService != null) {
 
-            //mBluetoothLeService.writeCustomCharacteristic(0x6F);
+            byte b = 0x00;
+            byte[] temp = "write".getBytes();
+            byte[] data = new byte[temp.length + 1];
+            data[0] = b;
+
+            for (int i = 1; i < temp.length + 1; i++) {
+                data[i] = temp[i - 1];
+            }
+
+            mBluetoothLeService.writeCustomCharacteristic(data);
         }
     }
 
     public void onClickRead(View v) {
 
         if (mBluetoothLeService != null) {
+
+            byte b = 0x00;
+            byte[] temp = "read".getBytes();
+            byte[] data = new byte[temp.length + 1];
+            data[0] = b;
+
+            for (int i = 1; i < temp.length + 1; i++) {
+                data[i] = temp[i - 1];
+            }
+
+            mBluetoothLeService.writeCustomCharacteristic(data);
 
             mBluetoothLeService.readCustomCharacteristic();
         }
@@ -329,7 +351,16 @@ public class DeviceControlActivity extends Activity {
 
         if (mBluetoothLeService != null) {
 
-            mBluetoothLeService.writeCustomCharacteristic("on".getBytes());
+            byte b = 0x00;
+            byte[] temp = "on".getBytes();
+            byte[] data = new byte[temp.length + 1];
+            data[0] = b;
+
+            for (int i = 1; i < temp.length + 1; i++) {
+                data[i] = temp[i - 1];
+            }
+
+            mBluetoothLeService.writeCustomCharacteristic(data);
         }
     }
 
@@ -337,7 +368,16 @@ public class DeviceControlActivity extends Activity {
 
         if (mBluetoothLeService != null) {
 
-            mBluetoothLeService.writeCustomCharacteristic("off".getBytes());
+            byte b = 0x00;
+            byte[] temp = "off".getBytes();
+            byte[] data = new byte[temp.length + 1];
+            data[0] = b;
+
+            for (int i = 1; i < temp.length + 1; i++) {
+                data[i] = temp[i - 1];
+            }
+
+            mBluetoothLeService.writeCustomCharacteristic(data);
         }
     }
 }

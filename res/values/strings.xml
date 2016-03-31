@@ -31,6 +31,9 @@
     <string name="led_settings">LED ON/OFF</string>
     <string name="button_on">ON</string>
     <string name="button_off">OFF</string>
+    <string name="barometer">Barometer Data</string>
+    <string name="button_read">Read</string>
+    <string name="button_write">Write</string>
 
     <!-- Menu items -->
     <string name="menu_connect">Connect</string>

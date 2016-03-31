@@ -81,6 +81,46 @@
             android:textColor="#f44336"/>
     </LinearLayout>
 
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/barometer"
+            android:textSize="24sp"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="40dp"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_read"
+            android:textSize="50sp"
+            android:id="@+id/button_write"
+            android:onClick="onClickRead"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="40dp"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_write"
+            android:textSize="50sp"
+            android:id="@+id/button_read"
+            android:onClick="onClickWrite" />
+
+    </LinearLayout>
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -95,7 +135,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="50dp"/>
+            android:layout_height="40dp"/>
 
         <Button
             android:layout_width="match_parent"
@@ -107,7 +147,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="50dp"/>
+            android:layout_height="40dp"/>
 
         <Button
             android:layout_width="match_parent"
@@ -118,4 +158,7 @@
             android:onClick="onClickLEDOff" />
 
     </LinearLayout>
+
+
+
 </LinearLayout>
