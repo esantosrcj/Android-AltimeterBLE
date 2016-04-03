@@ -38,6 +38,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * For a given BLE device, this Activity provides the user interface to connect, display data,
@@ -61,6 +63,8 @@ public class DeviceControlActivity extends Activity {
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private boolean mConnected = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
+
+    private Map<UUID, BluetoothGattCharacteristic> map = new HashMap<UUID, BluetoothGattCharacteristic>();
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
@@ -108,10 +112,12 @@ public class DeviceControlActivity extends Activity {
 
                 // Show all the supported services and characteristics on the user interface.
                 //displayGattServices(mBluetoothLeService.getSupportedGattServices());
+                getGattService(mBluetoothLeService.getSupportedGattService());
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
 
                 // Displays the data from the RX Characteristic
-                displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                //displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                displayData(intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA));
             }
         }
     };
@@ -239,8 +245,29 @@ public class DeviceControlActivity extends Activity {
         });
     }
 
+    // Maybe this should be byte????
     private void displayData(String data) {
         if (data != null) {
+            mDataField.setText(data);
+        }
+    }
+
+    private void displayData(byte[] byteArray) {
+        if (byteArray != null) {
+            String data = new String(byteArray);
+            /*tv.append(data);
+            // find the amount we need to scroll. This works by
+            // asking the TextView's internal layout for the position
+            // of the final line and then subtracting the TextView's height
+            final int scrollAmount = tv.getLayout().getLineTop(
+                    tv.getLineCount())
+                    - tv.getHeight();
+            // if there is no need to scroll, scrollAmount will be <=0
+            if (scrollAmount > 0)
+                tv.scrollTo(0, scrollAmount);
+            else
+                tv.scrollTo(0, 0);*/
+
             mDataField.setText(data);
         }
     }
@@ -309,6 +336,22 @@ public class DeviceControlActivity extends Activity {
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
         intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
         return intentFilter;
+    }
+
+
+    private void getGattService(BluetoothGattService gattService) {
+        if (gattService == null)
+            return;
+
+        BluetoothGattCharacteristic txCharacteristic = gattService
+                .getCharacteristic(BluetoothLeService.UUID_BLE_TX);
+        map.put(txCharacteristic.getUuid(), txCharacteristic);
+
+        BluetoothGattCharacteristic characteristicRx = gattService
+                .getCharacteristic(BluetoothLeService.UUID_BLE_RX);
+        mBluetoothLeService.setCharacteristicNotification(characteristicRx,
+                true);
+        mBluetoothLeService.readCharacteristic(characteristicRx);
     }
 
     public void onClickWrite(View v) {

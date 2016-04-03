@@ -147,6 +147,17 @@ public class BluetoothLeService extends Service {
             final int heartRate = characteristic.getIntValue(format, 1);
             Log.d(TAG, String.format("Received heart rate: %d", heartRate));
             intent.putExtra(EXTRA_DATA, String.valueOf(heartRate));
+        } else if (UUID_BLE_RX.equals(characteristic.getUuid())) {
+
+            final byte[] rx = characteristic.getValue();
+            if (rx != null && rx.length > 0) {
+
+                intent.putExtra(EXTRA_DATA, rx);
+            } else {
+
+                Log.w(TAG, "RX characteristic is null");
+            }
+
         } else {
 
 
@@ -163,8 +174,11 @@ public class BluetoothLeService extends Service {
 
 
                 intent.putExtra(EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
+
+
             }
         }
+
         sendBroadcast(intent);
     }
 
@@ -327,10 +341,20 @@ public class BluetoothLeService extends Service {
      *
      * @return A {@code List} of supported services.
      */
-    public List<BluetoothGattService> getSupportedGattServices() {
+    /*public List<BluetoothGattService> getSupportedGattServices() {
         if (mBluetoothGatt == null) return null;
 
         return mBluetoothGatt.getServices();
+    }*/
+
+    public BluetoothGattService getSupportedGattService() {
+        if (mBluetoothGatt == null) {
+
+            Log.w(TAG, "BluetoothGatt is equal to null");
+            return null;
+        }
+
+        return mBluetoothGatt.getService(UUID_BLE_TXRX);
     }
 
     public void readCustomCharacteristic() {
@@ -351,6 +375,12 @@ public class BluetoothLeService extends Service {
 
         /* Get the read Characteristic from the service */
         BluetoothGattCharacteristic mReadCharacteristic = mCustomService.getCharacteristic(UUID_BLE_RX);
+
+        if (mReadCharacteristic == null) {
+
+            Log.w(TAG, "No RX Characteristic found");
+            return;
+        }
 
         if (mBluetoothGatt.readCharacteristic(mReadCharacteristic) == false) {
 
