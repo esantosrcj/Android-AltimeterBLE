@@ -104,8 +104,8 @@
             android:layout_height="wrap_content"
             android:text="@string/button_read"
             android:textSize="50sp"
-            android:id="@+id/button_write"
-            android:onClick="onClickRead"/>
+            android:id="@+id/button_read"/>
+            <!--android:onClick="onClickRead"-->
 
         <Space
             android:layout_width="match_parent"
@@ -116,8 +116,8 @@
             android:layout_height="wrap_content"
             android:text="@string/button_write"
             android:textSize="50sp"
-            android:id="@+id/button_read"
-            android:onClick="onClickWrite" />
+            android:id="@+id/button_write" />
+            <!--android:onClick="onClickWrite" -->
 
     </LinearLayout>
 

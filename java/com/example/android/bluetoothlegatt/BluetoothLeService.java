@@ -32,6 +32,9 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -62,9 +65,6 @@ public class BluetoothLeService extends Service {
             "com.example.bluetooth.le.ACTION_DATA_AVAILABLE";
     public final static String EXTRA_DATA =
             "com.example.bluetooth.le.EXTRA_DATA";
-
-    public final static UUID UUID_HEART_RATE_MEASUREMENT =
-            UUID.fromString(SampleGattAttributes.HEART_RATE_MEASUREMENT);
 
     // ADDED
     public final static UUID UUID_BLE_TXRX =
@@ -131,54 +131,18 @@ public class BluetoothLeService extends Service {
                                  final BluetoothGattCharacteristic characteristic) {
         final Intent intent = new Intent(action);
 
-        // This is special handling for the Heart Rate Measurement profile.  Data parsing is
-        // carried out as per profile specifications:
-        // http://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_measurement.xml
-        if (UUID_HEART_RATE_MEASUREMENT.equals(characteristic.getUuid())) {
-            int flag = characteristic.getProperties();
-            int format = -1;
-            if ((flag & 0x01) != 0) {
-                format = BluetoothGattCharacteristic.FORMAT_UINT16;
-                Log.d(TAG, "Heart rate format UINT16.");
-            } else {
-                format = BluetoothGattCharacteristic.FORMAT_UINT8;
-                Log.d(TAG, "Heart rate format UINT8.");
-            }
-            final int heartRate = characteristic.getIntValue(format, 1);
-            Log.d(TAG, String.format("Received heart rate: %d", heartRate));
-            intent.putExtra(EXTRA_DATA, String.valueOf(heartRate));
-        } else if (UUID_BLE_RX.equals(characteristic.getUuid())) {
+        if (UUID_BLE_RX.equals(characteristic.getUuid())) {
 
             final byte[] rx = characteristic.getValue();
+            float value = ByteBuffer.wrap(rx).order(ByteOrder.BIG_ENDIAN).getFloat();
+
+            Log.w(TAG, String.format("GET RX Characteristic values = %.2f", value));
+
             if (rx != null && rx.length > 0) {
 
                 intent.putExtra(EXTRA_DATA, rx);
-            } else {
-
-                Log.w(TAG, "RX characteristic is null");
-            }
-
-        } else {
-
-
-            // Gets (READS) the value from the characteristic
-            // For all other profiles, writes the data formatted in HEX.
-            final byte[] data = characteristic.getValue();
-
-            if (data != null && data.length > 0) {
-
-                final StringBuilder stringBuilder = new StringBuilder(data.length);
-
-                for(byte byteChar : data)
-                    stringBuilder.append(String.format("%02X ", byteChar));
-
-
-                intent.putExtra(EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
-
-
             }
         }
-
         sendBroadcast(intent);
     }
 
@@ -309,7 +273,22 @@ public class BluetoothLeService extends Service {
             Log.w(TAG, "BluetoothAdapter not initialized");
             return;
         }
-        mBluetoothGatt.readCharacteristic(characteristic);
+
+        if (mBluetoothGatt.readCharacteristic(characteristic) == false) {
+
+            Log.w(TAG, "Failed to read characteristic");
+        }
+    }
+
+    public void writeCharacteristic(BluetoothGattCharacteristic characteristic) {
+
+        if (mBluetoothAdapter == null || mBluetoothGatt == null) {
+
+            Log.w(TAG, "BluetoothAdapter not initialized");
+            return;
+        }
+
+        mBluetoothGatt.writeCharacteristic(characteristic);
     }
 
     /**
@@ -326,12 +305,14 @@ public class BluetoothLeService extends Service {
         }
         mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
 
-        // This is specific to Heart Rate Measurement.
-        if (UUID_HEART_RATE_MEASUREMENT.equals(characteristic.getUuid())) {
+        if (UUID_BLE_RX.equals(characteristic.getUuid())) {
+
             BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
                     UUID.fromString(SampleGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
+
             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
             mBluetoothGatt.writeDescriptor(descriptor);
+
         }
     }
 
@@ -346,46 +327,13 @@ public class BluetoothLeService extends Service {
 
         return mBluetoothGatt.getServices();
     }*/
-
     public BluetoothGattService getSupportedGattService() {
-        if (mBluetoothGatt == null) {
 
-            Log.w(TAG, "BluetoothGatt is equal to null");
+        if (mBluetoothGatt == null) {
             return null;
         }
 
         return mBluetoothGatt.getService(UUID_BLE_TXRX);
-    }
-
-    public void readCustomCharacteristic() {
-
-        if (mBluetoothAdapter == null || mBluetoothGatt == null) {
-
-            Log.w(TAG, "BluetoothAdapter not initialized");
-            return;
-        }
-
-        /* Check if the Service is available on the device */
-        BluetoothGattService mCustomService = mBluetoothGatt.getService(UUID_BLE_TXRX);
-
-        if (mCustomService == null) {
-            Log.w(TAG, "Custom BLE Service not found");
-            return;
-        }
-
-        /* Get the read Characteristic from the service */
-        BluetoothGattCharacteristic mReadCharacteristic = mCustomService.getCharacteristic(UUID_BLE_RX);
-
-        if (mReadCharacteristic == null) {
-
-            Log.w(TAG, "No RX Characteristic found");
-            return;
-        }
-
-        if (mBluetoothGatt.readCharacteristic(mReadCharacteristic) == false) {
-
-            Log.w(TAG, "Failed to read characteristic");
-        }
     }
 
     public void writeCustomCharacteristic(byte[] data) {
@@ -407,14 +355,11 @@ public class BluetoothLeService extends Service {
 
         /* Get the write Characteristic from the service */
         BluetoothGattCharacteristic mWriteCharacteristic = mCustomService.getCharacteristic(UUID_BLE_TX);
-        //mWriteCharacteristic.setValue(value, BluetoothGattCharacteristic.FORMAT_UINT8, 0);
         mWriteCharacteristic.setValue(data);
-
 
         if (mBluetoothGatt.writeCharacteristic(mWriteCharacteristic) == false) {
 
             Log.w(TAG, "Failed to write characteristic");
         }
     }
-
 }
