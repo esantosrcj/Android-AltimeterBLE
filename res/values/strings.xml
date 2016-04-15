@@ -34,6 +34,9 @@
     <string name="barometer">Barometer Data</string>
     <string name="button_read">Read</string>
     <string name="button_write">Write</string>
+    <string name="button_graph">Graph</string>
+
+    <string name="graph_title">Altimeter Graph</string>
 
     <!-- Menu items -->
     <string name="menu_connect">Connect</string>

@@ -9,7 +9,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp">
+        android:layout_margin="5dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -34,7 +34,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp">
+        android:layout_margin="5dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -60,13 +60,13 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp">
+        android:layout_margin="5dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/label_data"
-            android:textSize="48sp"/>
+            android:textSize="36sp"/>
 
         <Space
             android:layout_width="5dp"
@@ -77,17 +77,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/no_data"
-            android:textSize="48sp"
+            android:textSize="36sp"
             android:textColor="#f44336"/>
     </LinearLayout>
-
-
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp">
+        android:layout_margin="5dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -97,7 +95,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="40dp"/>
+            android:layout_height="10dp"/>
 
         <Button
             android:layout_width="match_parent"
@@ -125,7 +123,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp">
+        android:layout_margin="5dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -135,7 +133,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="40dp"/>
+            android:layout_height="10dp"/>
 
         <Button
             android:layout_width="match_parent"
@@ -157,8 +155,18 @@
             android:id="@+id/button_off"
             android:onClick="onClickLEDOff" />
 
-    </LinearLayout>
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="40dp"/>
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_graph"
+            android:textSize="50sp"
+            android:id="@+id/graph" />
+
+    </LinearLayout>
 
 
 </LinearLayout>

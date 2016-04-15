@@ -17,6 +17,7 @@
 package com.example.android.bluetoothlegatt;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
@@ -33,6 +34,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
@@ -66,6 +68,7 @@ public class DeviceControlActivity extends Activity {
 
     private Button mButtonRead;
     private Button mButtonWrite;
+    private Button mButtonGraph;
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -181,6 +184,27 @@ public class DeviceControlActivity extends Activity {
 
                 characteristic.setValue(tx);
                 mBluetoothLeService.writeCharacteristic(characteristic);
+            }
+        });
+
+        mButtonGraph = (Button)findViewById(R.id.graph);
+        mButtonGraph.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //@Override
+                //protected void onListItemClick(ListView l, View v, int position, long id) {
+                    //final BluetoothDevice device = mLeDeviceListAdapter.getDevice(position);
+                    //if (device == null) return;
+                    //final Intent intent = new Intent(this, GraphActivity.class);
+                    //intent.putExtra(GraphActivity.EXTRAS_DEVICE_NAME, device.getName());
+                    //intent.putExtra(GraphActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
+                    //if (mScanning) {
+                      //  mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                        //mScanning = false;
+                    //}
+                    //startActivity(intent);
+                //}
+                graphData(v);
             }
         });
 
@@ -324,5 +348,13 @@ public class DeviceControlActivity extends Activity {
 
             mBluetoothLeService.writeCustomCharacteristic(data);
         }
+    }
+
+    public void graphData(View view) {
+
+        final Intent intent = new Intent(this, GraphActivity.class);
+        intent.putExtra(GraphActivity.EXTRAS_DEVICE_NAME, mDeviceName);
+        intent.putExtra(GraphActivity.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
+        startActivity(intent);
     }
 }
