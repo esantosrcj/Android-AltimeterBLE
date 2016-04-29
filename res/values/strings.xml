@@ -37,6 +37,9 @@
     <string name="button_graph">Graph</string>
 
     <string name="graph_title">Altimeter Graph</string>
+    <string name="after_flight">After Flight</string>
+    <string name="get_data">Get Data</string>
+    <string name="flight_mode">Flight Mode</string>
 
     <!-- Menu items -->
     <string name="menu_connect">Connect</string>
