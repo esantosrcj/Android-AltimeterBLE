@@ -40,6 +40,7 @@
     <string name="after_flight">After Flight</string>
     <string name="get_data">Get Data</string>
     <string name="flight_mode">Flight Mode</string>
+    <string name="current_data">Current Data</string>
 
     <!-- Menu items -->
     <string name="menu_connect">Connect</string>

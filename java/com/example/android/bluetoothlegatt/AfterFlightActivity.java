@@ -18,10 +18,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.HashMap;
@@ -37,6 +33,11 @@ public class AfterFlightActivity extends Activity {
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
 
+    // An array of floats that will hold the barometer values
+    private static int ARR_SIZE = 30;
+    public static float[] baroValues = new float[ARR_SIZE];
+    public static int index = 0;
+
     private TextView mConnectionState;
     private TextView mDataField;
     private String mDeviceName;
@@ -47,6 +48,7 @@ public class AfterFlightActivity extends Activity {
 
     private Button mGetData;
     private Button mGraphData;
+    private Button mCurrentData;
 
     private Map<UUID, BluetoothGattCharacteristic> map = new HashMap<UUID, BluetoothGattCharacteristic>();
 
@@ -144,6 +146,17 @@ public class AfterFlightActivity extends Activity {
             public void onClick(View v) {
 
                 graphData(v);
+            }
+        });
+
+        mCurrentData = (Button) findViewById(R.id.current);
+        mCurrentData.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+
+                // Display the current data in the float array
+                displayCurrentArray();
             }
         });
 
@@ -282,10 +295,30 @@ public class AfterFlightActivity extends Activity {
 
     public void displayData(byte[] byteArray) {
 
+        float value = 0;
+
         if (byteArray != null) {
 
-            float value = ByteBuffer.wrap(byteArray).order(ByteOrder.BIG_ENDIAN).getFloat();
+            //float value = ByteBuffer.wrap(byteArray).order(ByteOrder.BIG_ENDIAN).getFloat();
+            value = ByteBuffer.wrap(byteArray).order(ByteOrder.BIG_ENDIAN).getFloat();
             mDataField.setText(String.format("%.2f", value));
+        }
+
+        if (index < ARR_SIZE) {
+
+            // Store barometer value at index
+            baroValues[index] = value;
+            index++;
+
+        }
+    }
+
+    public void displayCurrentArray(){
+
+        for (int i = 0; i < baroValues.length; i++) {
+
+            //System.out.println("Value at index " + i + " is " + baroValues[i]);
+            Log.w(TAG, "Index: " + i + ", Value: " + baroValues[i]);
         }
     }
 
@@ -294,6 +327,7 @@ public class AfterFlightActivity extends Activity {
         final Intent intent = new Intent(this, GraphActivity.class);
         intent.putExtra(GraphActivity.EXTRAS_DEVICE_NAME, mDeviceName);
         intent.putExtra(GraphActivity.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
+        //intent.putExtra(GraphActivity.EXTRAS_DEVICE_ADDRESS, baroValues);
         startActivity(intent);
     }
 }

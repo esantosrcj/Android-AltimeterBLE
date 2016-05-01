@@ -31,6 +31,7 @@ public class GraphActivity extends Activity {
     private BluetoothLeService mBluetoothLeService;
     private boolean mConnected = false;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
